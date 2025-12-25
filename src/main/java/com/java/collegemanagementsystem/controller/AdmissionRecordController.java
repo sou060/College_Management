@@ -1,7 +1,8 @@
 package com.java.collegemanagementsystem.controller;
 
-import com.java.collegemanagementsystem.entity.AdmissionRecord;
+import com.java.collegemanagementsystem.dto.AdmissionRecordDTO;
 import com.java.collegemanagementsystem.service.AdmissionRecordService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,9 +18,10 @@ public class AdmissionRecordController {
     }
 
     @PostMapping
-    public ResponseEntity<AdmissionRecord> createAdmissionRecord(@RequestBody AdmissionRecord admissionRecord) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(admissionRecordService.createAdmission(admissionRecord));
+    public ResponseEntity<AdmissionRecordDTO> createAdmissionRecord(@Valid @RequestBody AdmissionRecordDTO admissionRecordDTO) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(admissionRecordService.createAdmission(admissionRecordDTO));
     }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteAdmissionRecord(@PathVariable Long id) {
         admissionRecordService.deleteAdmission(id);

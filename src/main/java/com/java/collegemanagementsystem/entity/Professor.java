@@ -19,17 +19,6 @@ public class Professor {
 
     @OneToMany(mappedBy = "professor", fetch = FetchType.LAZY)
     private List<Subject> subjects;
-
-    public void addSubject(Subject subject) {
-        subjects.add(subject);
-        subject.setProfessor(this);
-    }
-
-    public void removeSubject(Subject subject) {
-        subjects.remove(subject);
-        subject.setProfessor(null);
-    }
-
     @ManyToMany(mappedBy = "professors", fetch = FetchType.LAZY)
     private List<Student> students;
 

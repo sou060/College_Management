@@ -1,7 +1,7 @@
 package com.java.collegemanagementsystem;
 
 import com.java.collegemanagementsystem.controller.AdmissionRecordController;
-import com.java.collegemanagementsystem.entity.AdmissionRecord;
+import com.java.collegemanagementsystem.dto.AdmissionRecordDTO;
 import com.java.collegemanagementsystem.entity.Student;
 import com.java.collegemanagementsystem.repository.StudentRepository;
 import org.junit.jupiter.api.Test;
@@ -32,37 +32,15 @@ public class AdmissionRecordControllerTest {
         student = studentRepository.save(student);
 
         // Try to create an admission record with the existing student
-        AdmissionRecord admissionRecord = new AdmissionRecord();
-        admissionRecord.setFees(1000);
-        
-        // Simulating what might happen if the student is passed with just ID
-        Student studentRef = new Student();
-        studentRef.setId(student.getId());
-        admissionRecord.setStudent(studentRef);
+        AdmissionRecordDTO admissionRecordDTO = new AdmissionRecordDTO();
+        admissionRecordDTO.setFees(1000);
+        admissionRecordDTO.setStudentId(student.getId());
 
-        ResponseEntity<AdmissionRecord> response = admissionRecordController.createAdmissionRecord(admissionRecord);
+        ResponseEntity<AdmissionRecordDTO> response = admissionRecordController.createAdmissionRecord(admissionRecordDTO);
         
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        assertNotNull(response.getBody().getStudent(), "Student should not be null in response");
-        assertEquals(student.getId(), response.getBody().getStudent().getId());
-        assertNotNull(response.getBody().getStudent().getName(), "Student name should be populated");
-        assertEquals("John Doe", response.getBody().getStudent().getName());
+        assertNotNull(response.getBody().getStudentId(), "Student ID should not be null in response");
+        assertEquals(student.getId(), response.getBody().getStudentId());
     }
 
-    @Test
-    public void testCreateAdmissionWithNewStudent() throws Exception {
-        AdmissionRecord admissionRecord = new AdmissionRecord();
-        admissionRecord.setFees(2000);
-        
-        Student newStudent = new Student();
-        newStudent.setName("Jane Smith");
-        admissionRecord.setStudent(newStudent);
-
-        ResponseEntity<AdmissionRecord> response = admissionRecordController.createAdmissionRecord(admissionRecord);
-        
-        assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        assertNotNull(response.getBody().getStudent(), "Student should not be null in response");
-        assertEquals("Jane Smith", response.getBody().getStudent().getName());
-        assertNotNull(response.getBody().getStudent().getId(), "New student should have an ID");
-    }
 }

@@ -3,8 +3,8 @@ package com.java.collegemanagementsystem.dto;
 import java.time.LocalDateTime;
 
 public class ErrorResponse {
-    private String message;
-    private LocalDateTime timestamp;
+    private final String message;
+    private final LocalDateTime timestamp;
 
     public ErrorResponse(String message, LocalDateTime timestamp) {
         this.message = message;
