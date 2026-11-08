@@ -10,38 +10,45 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional(readOnly = true)
 public class AdmissionRecordService {
     private final AdmissionRecordRepository admissionRecordRepository;
     private final StudentRepository studentRepository;
 
-    public AdmissionRecordService(AdmissionRecordRepository admissionRecordRepository, StudentRepository studentRepository) {
+    public AdmissionRecordService(AdmissionRecordRepository admissionRecordRepository,
+            StudentRepository studentRepository) {
         this.admissionRecordRepository = admissionRecordRepository;
         this.studentRepository = studentRepository;
     }
 
     @Transactional
     public AdmissionRecordDTO createAdmission(AdmissionRecordDTO admissionRecordDTO) {
-        if (admissionRecordDTO.getStudentId() == null) {
-            throw new IllegalArgumentException("Student ID must be provided");
-        }
         Long studentId = admissionRecordDTO.getStudentId();
         Student student = studentRepository.findById(studentId)
                 .orElseThrow(() -> new ResourceNotFoundException("Student not found with id: " + studentId));
-        
+
         // Ensure student doesn't already have an admission record
         if (student.getAdmissionRecord() != null) {
             throw new IllegalStateException("Student already has an admission record");
         }
-        
+
         AdmissionRecord admissionRecord = new AdmissionRecord();
         admissionRecord.setFees(admissionRecordDTO.getFees());
         admissionRecord.setStudent(student);
-        
+
         return convertToDTO(admissionRecordRepository.save(admissionRecord));
     }
 
+    public java.util.List<AdmissionRecordDTO> getAllAdmissionRecords() {
+        return admissionRecordRepository.findAll().stream()
+                .map(this::convertToDTO)
+                .collect(java.util.stream.Collectors.toList());
+    }
+
+    @Transactional
     public void deleteAdmission(Long id) {
-        admissionRecordRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Resource not found with id:" + id));
+        admissionRecordRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Resource not found with id:" + id));
         admissionRecordRepository.deleteById(id);
     }
 

@@ -3,14 +3,17 @@ package com.java.collegemanagementsystem.controller;
 import com.java.collegemanagementsystem.dto.ProfessorDTO;
 import com.java.collegemanagementsystem.service.ProfessorService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/professor")
+@Validated
+@RequestMapping({"/api/v1/professor", "/api/professor"})
 public class ProfessorController {
     private final ProfessorService professorService;
 
@@ -29,17 +32,17 @@ public class ProfessorController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProfessorDTO> getProfessorById(@PathVariable Long id) {
+    public ResponseEntity<ProfessorDTO> getProfessorById(@PathVariable @Positive Long id) {
         return ResponseEntity.status(HttpStatus.OK).body(professorService.getProfessorById(id));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ProfessorDTO> updateProfessorById(@PathVariable Long id, @Valid @RequestBody ProfessorDTO professorDTO) {
+    public ResponseEntity<ProfessorDTO> updateProfessorById(@PathVariable @Positive Long id, @Valid @RequestBody ProfessorDTO professorDTO) {
         return ResponseEntity.status(HttpStatus.OK).body(professorService.updateProfessorById(id, professorDTO));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteProfessorById(@PathVariable Long id) {
+    public ResponseEntity<String> deleteProfessorById(@PathVariable @Positive Long id) {
         professorService.deleteProfessor(id);
         return ResponseEntity.status(HttpStatus.OK).body("Professor deleted successfully");
     }

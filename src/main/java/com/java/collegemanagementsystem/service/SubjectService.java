@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional(readOnly = true)
 public class SubjectService {
     private final SubjectRepository subjectRepository;
     private final ProfessorRepository professorRepository;
@@ -23,6 +24,7 @@ public class SubjectService {
         this.professorRepository = professorRepository;
     }
 
+    @Transactional
     public SubjectDTO createSubject(SubjectDTO subjectDTO) {
         Subject subject = new Subject();
         subject.setTitle(subjectDTO.getTitle());
@@ -65,6 +67,14 @@ public class SubjectService {
                 .orElseThrow(() -> new ResourceNotFoundException("Professor not found with id: " + professorId));
 
         subject.setProfessor(professor);
+        return convertToDTO(subjectRepository.save(subject));
+    }
+
+    @Transactional
+    public SubjectDTO unassignProfessorFromSubject(Long subjectId) {
+        Subject subject = subjectRepository.findById(subjectId)
+                .orElseThrow(() -> new ResourceNotFoundException("Subject not found with id: " + subjectId));
+        subject.setProfessor(null);
         return convertToDTO(subjectRepository.save(subject));
     }
 

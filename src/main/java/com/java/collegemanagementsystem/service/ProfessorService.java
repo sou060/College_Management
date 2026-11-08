@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional(readOnly = true)
 public class ProfessorService {
     private final ProfessorRepository professorRepository;
 
@@ -20,6 +21,7 @@ public class ProfessorService {
         this.professorRepository = professorRepository;
     }
 
+    @Transactional
     public ProfessorDTO createProfessor(ProfessorDTO professorDTO) {
         Professor professor = new Professor();
         professor.setTitle(professorDTO.getTitle());

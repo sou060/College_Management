@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional(readOnly = true)
 public class StudentService {
     private final StudentRepository studentRepository;
     private final SubjectRepository subjectRepository;
@@ -26,6 +27,7 @@ public class StudentService {
         this.professorRepository = professorRepository;
     }
 
+    @Transactional
     public StudentDTO createStudent(StudentDTO studentDTO) {
         Student student = new Student();
         student.setName(studentDTO.getName());
@@ -68,7 +70,9 @@ public class StudentService {
         Subject subject = subjectRepository.findById(subjectId)
                 .orElseThrow(() -> new ResourceNotFoundException("Subject not found with id: " + subjectId));
         
-        student.getSubjects().add(subject);
+        if (!student.getSubjects().contains(subject)) {
+            student.getSubjects().add(subject);
+        }
         return convertToDTO(studentRepository.save(student));
     }
 
@@ -79,7 +83,9 @@ public class StudentService {
         Professor professor = professorRepository.findById(professorId)
                 .orElseThrow(() -> new ResourceNotFoundException("Professor not found with id: " + professorId));
 
-        student.getProfessors().add(professor);
+        if (!student.getProfessors().contains(professor)) {
+            student.getProfessors().add(professor);
+        }
         return convertToDTO(studentRepository.save(student));
     }
 
